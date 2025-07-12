@@ -2,6 +2,11 @@ export default async function handler(req, res) {
   const { category = "technology", searchQuery = "", page = 1 } = req.query;
   const apiKey = process.env.NEWS_API_KEY;
 
+  if (!apiKey) {
+    console.error("NEWS_API_KEY is undefined");
+    return res.status(500).json({ error: "API key is missing" });
+  }
+
   try {
     let url = `https://newsapi.org/v2/top-headlines?apiKey=${apiKey}&pageSize=8&page=${page}`;
     if (searchQuery) {
@@ -10,9 +15,11 @@ export default async function handler(req, res) {
       url += `&category=${category}`;
     }
 
-    const response = await fetch(url);
+    console.log("Fetching from:", url);
+    const response = await fetch(url, { headers: { "User-Agent": "NewsNow-App/1.0" } });
     if (!response.ok) {
-      throw new Error(response.status === 429 ? "API limit reached" : "Network error");
+      const errorText = await response.text();
+      throw new Error(`HTTP ${response.status}: ${errorText}`);
     }
 
     const data = await response.json();
@@ -21,7 +28,7 @@ export default async function handler(req, res) {
       totalResults: data.totalResults || 0,
     });
   } catch (error) {
-    console.error("Error fetching news:", error);
+    console.error("Error fetching news:", error.message);
     res.status(500).json({
       error:
         error.message === "API limit reached"

@@ -80,14 +80,14 @@ export default function Home({ initialHeadlines, initialTotalResults }) {
 }
 
 export async function getServerSideProps({ query }) {
-  const validCategories = ["technology", "science", "sports","business", "entertainment", "saved"];
+  const validCategories = ["technology", "science", "business", "entertainment", "saved"];
   const category = validCategories.includes(query.category) ? query.category : "technology";
   const searchQuery = query.searchQuery || "";
   const page = 1;
 
   try {
     const response = await fetch(
-      `http://localhost:3000/api/news?category=${encodeURIComponent(category)}&searchQuery=${encodeURIComponent(searchQuery)}&page=${page}`
+      `/api/news?category=${encodeURIComponent(category)}&searchQuery=${encodeURIComponent(searchQuery)}&page=${page}`
     );
     const data = await response.json();
 
