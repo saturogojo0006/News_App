@@ -76,16 +76,20 @@ const NewsCard = ({ article, isDarkMode, savedArticles, onSaveArticle, getCatego
   }, []);
 
   return (
-    <div
-      className={`rounded-2xl ${
-        isDarkMode
-          ? "bg-gradient-to-br from-gray-900 to-blue-900/80 backdrop-blur-lg border-gray-800/50"
-          : "bg-gradient-to-br from-gray-50 to-emerald-50/80 backdrop-blur-lg border-gray-100/50"
-      } ${categoryStyles[category.toLowerCase()]?.border || categoryStyles.technology.border} w-[42vw]`}
-      ref={cardRef}
-    >
+   <div
+  ref={cardRef}
+  className={`rounded-2xl border p-4
+    ${
+      isDarkMode
+        ? "bg-gradient-to-br from-gray-900 to-blue-900/80 backdrop-blur-lg border-gray-800/50"
+        : "bg-gradient-to-br from-gray-50 to-emerald-50/80 backdrop-blur-lg border-gray-100/50"
+    }
+    ${categoryStyles[category.toLowerCase()]?.border || categoryStyles.technology.border}
+    w-[90vw] sm:w-[70vw] md:w-[50vw] lg:w-[42vw]
+  `}
+>
       <div className="flex flex-col">
-        <div className="h-48 sm:h-56 overflow-hidden rounded-t-2xl relative group">
+        <div className="h-48 sm:h-60 overflow-hidden rounded-t-2xl relative group">
           {article.urlToImage ? (
             <div className="relative w-full h-full">
               <img

@@ -3,7 +3,7 @@ import Navbar from "../components/Navbar";
 import NewsSection from "../components/NewsSection";
 
 export default function Home({ initialHeadlines, initialTotalResults }) {
-  const validCategories = ["technology", "science", "business", "entertainment", "saved"];
+  const validCategories = ["technology", "science","sports", "business", "entertainment", "saved"];
   const [category, setCategory] = useState("technology");
   const [searchQuery, setSearchQuery] = useState("");
   const [isDarkMode, setIsDarkMode] = useState(true);
@@ -33,14 +33,7 @@ export default function Home({ initialHeadlines, initialTotalResults }) {
     }, 800);
   };
 
-  const handleSetCategory = (newCategory) => {
-    if (validCategories.includes(newCategory)) {
-      setCategory(newCategory);
-    } else {
-      console.warn(`Invalid category: ${newCategory}. Defaulting to technology.`);
-      setCategory("technology");
-    }
-  };
+ 
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -50,17 +43,17 @@ export default function Home({ initialHeadlines, initialTotalResults }) {
 
   return (
     <div
-      className={`min-h-screen font-orbitron grid-bg transition-colors duration-700 ${
+      className={` grid-bg transition-colors duration-700 ${
         isDarkMode ? "bg-black text-white" : "bg-gray-100 text-gray-900"
       } `}
     >
       <div
-        className={`absolute inset-0 pointer-events-none transition-opacity duration-700 ${
+        className={` ${
           themeTransition ? "opacity-100" : "opacity-0"
         } `}
       />
       <Navbar
-        setCategory={handleSetCategory}
+        setCategory={setCategory}
         setSearchQuery={setSearchQuery}
         isDarkMode={isDarkMode}
         setIsDarkMode={toggleTheme}

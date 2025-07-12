@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import NewsCard from "./NewsCard";
 import HeroSection from "./HeroSection";
 import Footer from "./Footer";
-
+import axios from 'axios';
 const NewsSection = ({
   category = "technology",
   searchQuery = "",
@@ -32,31 +32,37 @@ const NewsSection = ({
   };
 
   const fetchNews = async (category = "technology", query = "", pageNum = 1) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const url = `/api/news?category=${encodeURIComponent(category)}&searchQuery=${encodeURIComponent(query)}&page=${pageNum}`;
-      const response = await fetch(url);
-      const data = await response.json();
+  setLoading(true);
+  setError(null);
 
-      if (!response.ok) {
-        throw new Error(data.error || "Network error");
+  try {
+    const response = await axios.get('/api/news', {
+      params: {
+        category,
+        searchQuery: query,
+        page: pageNum
       }
+    });
 
-      const articles = category === "saved" ? savedArticles : data.articles || [];
-      setHeadlines(articles);
-      setTotalPages(Math.ceil(data.totalResults / 8) || 1);
-    } catch (error) {
-      setError(
-        error.message === "API limit reached"
-          ? "API limit reached. Please try again later."
-          : "Unable to Refresh News. Please try again."
-      );
-      console.error("Error fetching data:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+    const data = response.data;
+
+    const articles = category === "saved" ? savedArticles : data.articles || [];
+    setHeadlines(articles);
+    setTotalPages(Math.ceil(data.totalResults / 8) || 1);
+  } catch (error) {
+    const isLimitError = error.response?.data?.error === "API limit reached";
+
+    setError(
+      isLimitError
+        ? "API limit reached. Please try again later."
+        : "Unable to Refresh News. Please try again."
+    );
+
+    console.error("Error fetching data:", error);
+  } finally {
+    setLoading(false);
+  }
+};
 
   useEffect(() => {
     setPage(1);
@@ -78,12 +84,12 @@ const NewsSection = ({
     const ticker = tickerRef.current;
     if (ticker && headlines.length > 0 && !isTickerPaused) {
       const animateTicker = () => {
-        ticker.style.transition = "transform 25s linear";
+        ticker.style.transition = "transform 25s linear ";
         ticker.style.transform = `translateX(-${ticker.scrollWidth}px)`;
         setTimeout(() => {
           ticker.style.transition = "none";
           ticker.style.transform = "translateX(100%)";
-          setTimeout(animateTicker, 500);
+          setTimeout(animateTicker, 800);
         }, 25000);
       };
       animateTicker();
